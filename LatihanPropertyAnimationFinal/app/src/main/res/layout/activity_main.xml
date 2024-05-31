@@ -43,4 +43,19 @@
             app:titleTextColor="@color/white"/>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addStory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:src="@drawable/baseline_post_add_24"
+        app:backgroundTint="@color/navy"
+        app:layout_constraintBottom_toBottomOf="@+id/rvStory"
+        app:layout_constraintEnd_toEndOf="@+id/rvStory"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976"
+        app:tint="@color/white" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

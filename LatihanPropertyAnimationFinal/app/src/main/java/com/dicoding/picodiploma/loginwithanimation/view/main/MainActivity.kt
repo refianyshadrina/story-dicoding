@@ -96,6 +96,10 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
+        binding.addStory.setOnClickListener {
+            startActivity(Intent(this, StoryFormActivity::class.java))
+        }
     }
 
 //    private fun playAnimation() {
