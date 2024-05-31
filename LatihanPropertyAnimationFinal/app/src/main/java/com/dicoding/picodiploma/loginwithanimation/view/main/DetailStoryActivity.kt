@@ -48,19 +48,14 @@ class DetailStoryActivity : AppCompatActivity() {
                 .load(detailStory.photoUrl)
                 .into(binding.imageViewStory)
         })
-//        viewModel.detailStory.observe(this) {
-//            binding.textViewAuthorName.text = it.name
-//            binding.textViewStoryContent.text = it.description
-//            Glide.with(this)
-//                .load(it.photoUrl)
-//                .into(binding.imageViewStory)
-//        }
 
         supportActionBar?.elevation = 0f
 
         viewModel.isLoading.observe(this) {
             showLoading(it)
         }
+
+        setupAction()
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -68,6 +63,18 @@ class DetailStoryActivity : AppCompatActivity() {
             binding.progressBar.visibility = View.VISIBLE
         } else {
             binding.progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun setupAction() {
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu1 -> {
+                    viewModel.logout()
+                    true
+                }
+                else -> false
+            }
         }
     }
 

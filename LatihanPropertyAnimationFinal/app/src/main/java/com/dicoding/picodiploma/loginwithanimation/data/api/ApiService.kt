@@ -1,5 +1,6 @@
 package com.dicoding.picodiploma.loginwithanimation.data.api
 
+import com.dicoding.picodiploma.loginwithanimation.data.response.DetailStoryResponse
 import com.dicoding.picodiploma.loginwithanimation.data.response.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.data.response.ListStoryResponse
 import com.dicoding.picodiploma.loginwithanimation.data.response.LoginResponse
@@ -32,5 +33,5 @@ interface ApiService {
     fun getStories(): Call<ListStoryResponse>
 
     @GET("v1/stories/{id}")
-    fun getStoryById(@Path("id") id: String,): Call<ListStoryItem>
+    fun getStoryById(@Path("id") id: String,): Call<DetailStoryResponse>
 }
