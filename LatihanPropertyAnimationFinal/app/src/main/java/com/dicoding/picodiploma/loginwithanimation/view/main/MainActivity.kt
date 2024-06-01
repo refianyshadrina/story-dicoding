@@ -2,6 +2,7 @@ package com.dicoding.picodiploma.loginwithanimation.view.main
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.picodiploma.loginwithanimation.R
@@ -52,6 +54,22 @@ class MainActivity : AppCompatActivity() {
 
         setupView()
         setupAction()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.getSession().observe(this) { user ->
+            if (!user.isLogin) {
+                startActivity(Intent(this, WelcomeActivity::class.java))
+                finish()
+            }
+            viewModel.getAllStories(user.token)
+        }
+
+        viewModel.storiesResponse.observe(this) { stories ->
+            setStoryData(stories)
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {
