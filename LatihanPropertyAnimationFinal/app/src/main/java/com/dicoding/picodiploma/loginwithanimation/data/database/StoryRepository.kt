@@ -35,7 +35,7 @@ class StoryRepository (private val apiService: ApiService, private val userPrefe
         executorService.execute { dao.insert(story) }
     }
 
-    fun getQuote(): LiveData<PagingData<ListStoryItem>> {
+    fun getStory(): LiveData<PagingData<ListStoryItem>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 5

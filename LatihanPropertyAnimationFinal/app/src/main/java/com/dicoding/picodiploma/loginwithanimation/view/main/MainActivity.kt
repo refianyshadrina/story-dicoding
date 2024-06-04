@@ -12,6 +12,10 @@ import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.picodiploma.loginwithanimation.R
@@ -20,6 +24,7 @@ import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityMainBindi
 import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
 import com.dicoding.picodiploma.loginwithanimation.view.maps.MapsActivity
 import com.dicoding.picodiploma.loginwithanimation.view.welcome.WelcomeActivity
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModels<MainViewModel> {
@@ -27,30 +32,36 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var binding: ActivityMainBinding
 
+    private val adapter = StoryAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.getSession().observe(this) { user ->
-            if (!user.isLogin) {
-                startActivity(Intent(this, WelcomeActivity::class.java))
-                finish()
-            }
-            viewModel.getAllStories(user.token)
-        }
-
-        viewModel.storiesResponse.observe(this) { stories ->
-            setStoryData(stories)
-        }
-
         val layoutManager = LinearLayoutManager(this)
         binding.rvStory.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         binding.rvStory.addItemDecoration(itemDecoration)
+        binding.rvStory.adapter = adapter
 
-        viewModel.isLoading.observe(this) {
-            showLoading(it)
+        viewModel.getSession().observe(this) { user ->
+            if (!user.isLogin) {
+                startActivity(Intent(this, WelcomeActivity::class.java))
+                finish()
+            } else {
+                viewModel.getAllStories(user.token)
+            }
+        }
+
+        viewModel.storiesResponse.observe(this) { stories ->
+            lifecycleScope.launch {
+                adapter.submitData(stories)
+            }
+        }
+
+        viewModel.isLoading.observe(this) { isLoading ->
+            showLoading(isLoading)
         }
 
         setupView()
@@ -59,37 +70,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        viewModel.getSession().observe(this) { user ->
-            if (!user.isLogin) {
-                startActivity(Intent(this, WelcomeActivity::class.java))
-                finish()
+        if(!adapter.snapshot().isEmpty()){
+            adapter.refresh()
+            lifecycleScope.launch {
+                adapter.loadStateFlow
+                    .collect {
+                        binding.rvStory.smoothScrollToPosition(0)
+                    }
             }
-            viewModel.getAllStories(user.token)
-        }
-
-        viewModel.storiesResponse.observe(this) { stories ->
-            setStoryData(stories)
         }
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.GONE
-        }
-    }
-
-    private fun setStoryData(storyData: List<ListStoryItem>) {
-        val adapter = StoryAdapter()
-        adapter.setOnItemClickListener { story ->
-            val intent = Intent(binding.root.context, DetailStoryActivity::class.java)
-            intent.putExtra(DetailStoryActivity.EXTRA_ID, story.id)
-            binding.root.context.startActivity(intent)
-        }
-        adapter.submitList(storyData)
-        binding.rvStory.adapter = adapter
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun setupView() {
@@ -125,21 +118,4 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, StoryFormActivity::class.java))
         }
     }
-
-//    private fun playAnimation() {
-//        ObjectAnimator.ofFloat(binding.imageView, View.TRANSLATION_X, -30f, 30f).apply {
-//            duration = 6000
-//            repeatCount = ObjectAnimator.INFINITE
-//            repeatMode = ObjectAnimator.REVERSE
-//        }.start()
-//
-//        val name = ObjectAnimator.ofFloat(binding.nameTextView, View.ALPHA, 1f).setDuration(100)
-//        val message = ObjectAnimator.ofFloat(binding.messageTextView, View.ALPHA, 1f).setDuration(100)
-//        val logout = ObjectAnimator.ofFloat(binding.logoutButton, View.ALPHA, 1f).setDuration(100)
-//
-//        AnimatorSet().apply {
-//            playSequentially(name, message, logout)
-//            startDelay = 100
-//        }.start()
-//    }
 }
