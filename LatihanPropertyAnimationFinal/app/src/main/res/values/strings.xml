@@ -16,4 +16,11 @@
     <string name="author_name">Author Name</string>
     <string name="description">Description</string>
     <string name="empty_image_warning">Anda belum memasukkan gambar</string>
+    <string name="password_too_short">\"Minimal password yang dimasukkan 8 karakter\"</string>
+    <string name="hint_password">Masukkan password...</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="normal_type">Normal</string>
+    <string name="satellite_type">Satellite</string>
+    <string name="terrain_type">Terrain</string>
+    <string name="hybrid_type">Hybrid</string>
 </resources>

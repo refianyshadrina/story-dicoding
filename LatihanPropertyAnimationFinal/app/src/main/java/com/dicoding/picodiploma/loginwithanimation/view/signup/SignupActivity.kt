@@ -98,24 +98,24 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun validateInput() {
-        binding.passwordEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.length < 8) {
-                    binding.passwordEditTextLayout.error = "Password tidak boleh kurang dari 8 karakter"
-                } else {
-                    binding.passwordEditTextLayout.error = null
-                }
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-
-            }
-
-        })
+//        binding.passwordEditText.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//
+//            }
+//
+//            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+//                if (s.length < 8) {
+//                    binding.passwordEditTextLayout.error = "Password tidak boleh kurang dari 8 karakter"
+//                } else {
+//                    binding.passwordEditTextLayout.error = null
+//                }
+//            }
+//
+//            override fun afterTextChanged(p0: Editable?) {
+//
+//            }
+//
+//        })
 
         binding.emailEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
