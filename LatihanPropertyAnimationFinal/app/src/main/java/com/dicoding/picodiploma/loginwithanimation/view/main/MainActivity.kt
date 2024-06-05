@@ -45,6 +45,12 @@ class MainActivity : AppCompatActivity() {
         binding.rvStory.addItemDecoration(itemDecoration)
         binding.rvStory.adapter = adapter
 
+        adapter.setOnItemClickListener { story ->
+            val intent = Intent(this, DetailStoryActivity::class.java)
+            intent.putExtra(DetailStoryActivity.EXTRA_ID, story.id)
+            startActivity(intent)
+        }
+
         viewModel.getSession().observe(this) { user ->
             if (!user.isLogin) {
                 startActivity(Intent(this, WelcomeActivity::class.java))
