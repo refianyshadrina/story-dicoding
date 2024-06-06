@@ -27,10 +27,20 @@ class MainViewModel(private val repository: StoryRepository) : ViewModel() {
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> = _message
 
-
-
     val storiesResponse: LiveData<PagingData<ListStoryItem>> =
         repository.getStory().cachedIn(viewModelScope)
+
+    private val session: LiveData<UserModel> = repository.getSession().asLiveData()
+
+    init {
+        viewModelScope.launch {
+            session.observeForever { user ->
+                if (user.isLogin) {
+                    getAllStories(user.token)
+                }
+            }
+        }
+    }
 
     fun getSession(): LiveData<UserModel> {
         return repository.getSession().asLiveData()

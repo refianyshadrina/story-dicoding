@@ -31,18 +31,22 @@ class MainActivity : AppCompatActivity() {
         ViewModelFactory.getInstance(this)
     }
     private lateinit var binding: ActivityMainBinding
+    private lateinit var layoutManager: LinearLayoutManager
 
-    private val adapter = StoryAdapter()
+    private lateinit var adapter: StoryAdapter
+    private var scrollPosition: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val layoutManager = LinearLayoutManager(this)
+        layoutManager = LinearLayoutManager(this)
         binding.rvStory.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         binding.rvStory.addItemDecoration(itemDecoration)
+
+        adapter = StoryAdapter()
         binding.rvStory.adapter = adapter
 
         adapter.setOnItemClickListener { story ->
@@ -55,8 +59,6 @@ class MainActivity : AppCompatActivity() {
             if (!user.isLogin) {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
-            } else {
-                viewModel.getAllStories(user.token)
             }
         }
 
@@ -74,6 +76,11 @@ class MainActivity : AppCompatActivity() {
         setupAction()
     }
 
+    override fun onPause() {
+        super.onPause()
+        scrollPosition = layoutManager.findFirstVisibleItemPosition()
+    }
+
     override fun onResume() {
         super.onResume()
         if(!adapter.snapshot().isEmpty()){
@@ -81,7 +88,7 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 adapter.loadStateFlow
                     .collect {
-                        binding.rvStory.smoothScrollToPosition(0)
+                        layoutManager.scrollToPosition(scrollPosition)
                     }
             }
         }
